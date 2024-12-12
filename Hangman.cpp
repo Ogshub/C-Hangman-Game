@@ -16,16 +16,17 @@ namespace WordList {
 	}
 
 	std::string getHiddenName(const std::string& word) {
-		std::string hidden(word.length(), '_');
-		return hidden;
+		return std::string(word.length(), '_');
 	}
+
 }
 
 class Session {
-	std::string RandomWord{};
-	std::string HiddenWord{};
+	const std::string RandomWord;
+	std::string HiddenWord;
 	std::vector<char> guessedLetters{};
 	int remAttempts{ 5 };
+
 public:
 	Session()
 		: RandomWord{ WordList::getRandomWord() }, HiddenWord{WordList::getHiddenName(RandomWord)} {
@@ -48,10 +49,10 @@ public:
 		while (true) {
 			std::cout << "Enter your guess: ";
 			std::cin >> input;
-			if (std::cin.fail() || !std::isalpha(input)) {
+			if (std::cin.fail() || !std::isalpha(input) || input == ' ') {
 				std::cin.clear();
 				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-				std::cout << "Please enter valid characters.\n";
+				std::cout << "Please enter a valid character.\n";
 				continue;
 			}
 
@@ -90,7 +91,7 @@ public:
 		}
 
 		if (remAttempts <= 0) {
-			std::cout << "Too bad you lose.Try again next time!.\n";
+			std::cout << "\nToo bad you lose. The word was : "<<RandomWord <<"\nTry again next time!.\n";
 			return true;
 		}
 
@@ -108,7 +109,9 @@ public:
 				std::cout << "Good guess.\n";
 			}
 			else {
-				std::cout << "Incorrect guess!.Remaining attempt: " << std::string(remAttempts, '+') << "\n";
+				if (remAttempts > 0) {
+					std::cout << "Incorrect guess. Remaining attempt: " << std::string(remAttempts, '+') << "\n";
+				}
 			}
 		}
 	}
@@ -121,6 +124,7 @@ int main() {
 	s.gameLoop();
 	std::cout << "\n";
 	std::cout << "Thanks for playing!.";
+	std::cout << '\n';
 
 	return 0;
 }
